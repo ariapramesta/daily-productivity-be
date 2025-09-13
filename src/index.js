@@ -7,6 +7,8 @@ import userRoutes from "./routes/userRoutes.js";
 import noteRoutes from "./routes/noteRoutes.js"
 import todoRoutes from "./routes/todoRoutes.js";
 import tagRoutes from "./routes/tagRoutes.js";
+import expenseRoutes from "./routes/expenseRoutes.js";
+import expenseItemRoutes from "./routes/expenseItemRoutes.js";
 
 dotenv.config();
 const app = express();
@@ -20,6 +22,8 @@ app.use("/users", userRoutes);
 app.use("/notes", noteRoutes);
 app.use("/todos", todoRoutes);
 app.use("/tags", tagRoutes);
+app.use("/expenses", expenseRoutes);
+app.use("/expense-items", expenseItemRoutes);
 
 app.get("/", (req, res) => {
     res.json({ message: "API running..." });
