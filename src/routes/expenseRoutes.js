@@ -6,14 +6,14 @@ import {
     updateExpense,
     deleteExpense,
 } from "../controllers/expenseController.js";
-import { verifyToken } from "../middlewares/verifyToken.js";
+import { authMiddleware } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
-router.get("/", verifyToken, getExpenses);
-router.get("/:id", verifyToken, getExpenseById);
-router.post("/", verifyToken, createExpense);
-router.put("/:id", verifyToken, updateExpense);
-router.delete("/:id", verifyToken, deleteExpense);
+router.get("/", authMiddleware, getExpenses);
+router.get("/:id", authMiddleware, getExpenseById);
+router.post("/", authMiddleware, createExpense);
+router.put("/:id", authMiddleware, updateExpense);
+router.delete("/:id", authMiddleware, deleteExpense);
 
 export default router;

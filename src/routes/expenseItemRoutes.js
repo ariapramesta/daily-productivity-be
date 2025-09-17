@@ -4,12 +4,12 @@ import {
     updateExpenseItem,
     deleteExpenseItem,
 } from "../controllers/expenseItemController.js";
-import { verifyToken } from "../middlewares/verifyToken.js";
+import { authMiddleware } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
-router.post("/:expenseId", verifyToken, createExpenseItem);
-router.put("/:expenseId/:id", verifyToken, updateExpenseItem);
-router.delete("/:id", verifyToken, deleteExpenseItem);
+router.post("/:expenseId", authMiddleware, createExpenseItem);
+router.put("/:expenseId/:id", authMiddleware, updateExpenseItem);
+router.delete("/:id", authMiddleware, deleteExpenseItem);
 
 export default router;

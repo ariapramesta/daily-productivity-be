@@ -1,11 +1,11 @@
 import express from "express";
-import { verifyToken } from "../middlewares/verifyToken.js";
+import { authMiddleware } from "../middlewares/authMiddleware.js";
 import { createTag, getTags, deleteTag } from "../controllers/tagController.js";
 
 const router = express.Router();
 
-router.post("/", verifyToken, createTag);
-router.get("/", verifyToken, getTags);
-router.delete("/:id", verifyToken, deleteTag);
+router.post("/", authMiddleware, createTag);
+router.get("/", authMiddleware, getTags);
+router.delete("/:id", authMiddleware, deleteTag);
 
 export default router;

@@ -1,9 +1,9 @@
 import express from "express";
 import cookieParser from "cookie-parser";
+import cors from "cors";
 import dotenv from "dotenv";
 
 import authRoutes from "./routes/authRoutes.js";
-import userRoutes from "./routes/userRoutes.js";
 import noteRoutes from "./routes/noteRoutes.js"
 import todoRoutes from "./routes/todoRoutes.js";
 import tagRoutes from "./routes/tagRoutes.js";
@@ -15,10 +15,13 @@ const app = express();
 
 app.use(express.json());
 app.use(cookieParser())
+app.use(cors({
+    origin: "http://localhost:3001", // frontend
+    credentials: true
+}));
 
 // routes
 app.use("/auth", authRoutes);
-app.use("/users", userRoutes);
 app.use("/notes", noteRoutes);
 app.use("/todos", todoRoutes);
 app.use("/tags", tagRoutes);
