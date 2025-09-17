@@ -159,6 +159,25 @@ export const logout = async (req, res) => {
 };
 
 // Me
-export const me = (req, res) => {
-    res.json({ user: req.user });
+export const me = async (req, res) => {
+    try {
+        const user = await prisma.user.findUnique({
+            where: { id: req.user.id },
+            select: {
+                id: true,
+                email: true,
+                name: true,
+                avatar: true,
+            },
+        });
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        res.json({ user });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Internal server error" });
+    }
 };
