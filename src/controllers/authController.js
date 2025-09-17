@@ -6,7 +6,12 @@ const prisma = new PrismaClient
 
 const generateAccessToken = (user) => {
     return jwt.sign(
-        { id: user.id, email: user.email },
+        {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            avatar: user.avatar,
+        },
         process.env.ACCESS_TOKEN_SECRET,
         { expiresIn: "15m" }
     );
@@ -159,25 +164,6 @@ export const logout = async (req, res) => {
 };
 
 // Me
-export const me = async (req, res) => {
-    try {
-        const user = await prisma.user.findUnique({
-            where: { id: req.user.id },
-            select: {
-                id: true,
-                email: true,
-                name: true,
-                avatar: true,
-            },
-        });
-
-        if (!user) {
-            return res.status(404).json({ message: "User not found" });
-        }
-
-        res.json({ user });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "Internal server error" });
-    }
+export const me = (req, res) => {
+    res.json({ user: req.user });
 };
