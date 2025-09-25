@@ -2,6 +2,7 @@ import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import dotenv from "dotenv";
+import morgan from "morgan";
 
 import authRoutes from "./routes/authRoutes.js";
 import noteRoutes from "./routes/noteRoutes.js"
@@ -19,6 +20,7 @@ app.use(cors({
     origin: "http://localhost:3001", // frontend
     credentials: true
 }));
+app.use(morgan("dev"))
 
 // routes
 app.use("/auth", authRoutes);

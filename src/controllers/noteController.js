@@ -22,14 +22,48 @@ export const createNote = async (req, res) => {
 // Get all notes for logged-in user
 export const getNotes = async (req, res) => {
     try {
+        const { page = 1, limit = 10, search = "" } = req.query;
+
+        const skip = (parseInt(page) - 1) * parseInt(limit);
+        const take = parseInt(limit);
+
+        const where = {
+            userId: req.user.id,
+            OR: search
+                ? [
+                    { title: { contains: search, mode: "insensitive" } },
+                    { content: { contains: search, mode: "insensitive" } },
+                ]
+                : undefined,
+        };
+
+        // hitung total data
+        const total = await prisma.note.count({ where });
+
+        // ambil data sesuai pagination
         const notes = await prisma.note.findMany({
-            where: { userId: req.user.id }
+            where,
+            skip,
+            take,
+            orderBy: {
+                createdAt: "desc",
+            },
         });
-        res.json(notes);
+
+        res.json({
+            data: notes,
+            meta: {
+                total,
+                page: parseInt(page),
+                limit: parseInt(limit),
+                totalPages: Math.ceil(total / take),
+            },
+        });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 };
+
 
 // Get single note
 export const getNote = async (req, res) => {
@@ -48,7 +82,7 @@ export const getNote = async (req, res) => {
 export const updateNote = async (req, res) => {
     const { title, content } = req.body;
     try {
-        const note = await prisma.note.update({
+        const note = await prisma.note.updateMany({
             where: { id: req.params.id, userId: req.user.id },
             data: { title, content }
         });
