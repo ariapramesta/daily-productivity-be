@@ -28,14 +28,52 @@ export const createTodo = async (req, res) => {
 
 export const getTodos = async (req, res) => {
     try {
+        const {
+            search = "",
+            page = 1,
+            limit = 10,
+            sort = "desc"
+        } = req.query;
+
+        const skip = (parseInt(page) - 1) * parseInt(limit);
+        const take = parseInt(limit);
+
+        const where = {
+            userId: req.user.id,
+            ...(search && {
+                title: { contains: search, mode: "insensitive" }
+            })
+        };
+
         const todos = await prisma.todo.findMany({
-            where: { userId: req.user.id },
-            orderBy: [{ deadline: "asc" }, { createdAt: "desc" }],
+            where,
+            skip,
+            take,
+            orderBy: [
+                { updatedAt: sort.toLowerCase() === "asc" ? "asc" : "desc" }
+            ],
             include: { tags: true, items: true }
         });
-        res.json(todos);
-    } catch (e) { res.status(500).json({ error: e.message }); }
+
+        const total = await prisma.todo.count({ where });
+        const totalPages = Math.ceil(total / take);
+
+        res.json({
+            data: {
+                todos,
+                total,
+                page: parseInt(page),
+                limit: take,
+                totalPages
+            }
+
+        });
+
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
 };
+
 
 export const getTodo = async (req, res) => {
     try {

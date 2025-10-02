@@ -22,7 +22,7 @@ export const createNote = async (req, res) => {
 // Get all notes for logged-in user
 export const getNotes = async (req, res) => {
     try {
-        const { page = 1, limit = 10, search = "" } = req.query;
+        const { page = 1, limit = 20, search = "", sort = "updatedAt", order = "desc" } = req.query;
 
         const skip = (parseInt(page) - 1) * parseInt(limit);
         const take = parseInt(limit);
@@ -46,13 +46,13 @@ export const getNotes = async (req, res) => {
             skip,
             take,
             orderBy: {
-                createdAt: "desc",
+                [sort]: order,
             },
         });
 
         res.json({
-            data: notes,
-            meta: {
+            data: {
+                notes,
                 total,
                 page: parseInt(page),
                 limit: parseInt(limit),
